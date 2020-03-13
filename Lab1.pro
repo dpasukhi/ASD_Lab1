@@ -4,4 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        src/main.cpp
+        src/utext.cpp
+
+HEADERS += \
+    include/utext.h
