@@ -2,19 +2,27 @@
 #define UTEXT_H
 #include <string>
 #include <algorithm>
+
+
+//declaration of structure
 struct Iterator;
+
+
+
+//container for pointers of Utext
 struct Node {
-std::string data;
-Node* next;
-Node* down;
-int level;
+    std::string data;
+    Node* next;
+    Node* down;
+    int level;
 
 };
 
 class UText
 {
-Node * first;
-Node* end;
+protected:
+    Node * first;
+    Node* end;
 public:
     UText();
     ~UText();
@@ -29,8 +37,8 @@ public:
 struct Iterator
 {
     Node *it;
-    std::pair<int, std::string>& operator*();
-    std::pair<int, std::string>& operator->();
+    std::pair<int, std::string>  operator*();
+    std::pair<int, std::string> operator->();
 
     Iterator next();
     Iterator endNext();//"идет вправо до упора"
