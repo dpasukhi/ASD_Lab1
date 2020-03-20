@@ -48,6 +48,19 @@ std::pair<int, std::string> UText::pop()
     return std::pair<int,std::string>(0,"");
 }
 
+//Возвращает итератор, инициализированный нодом начала
+UText::Iterator UText::begin()
+{
+    return  Iterator();
+}
+
+
+//Возвращает итератор, инициализированный нодом начала
+UText::Iterator UText::last()
+{
+    return Iterator();
+}
+
 
 
 
@@ -80,47 +93,25 @@ void UText::print()
 
 
 
-//Указатель на начало (поле it)
-Iterator UText::begin()
+//Используем это чтобы обращаться, присваивать это к типу Node без звездочки
+UText::Node & UText::Iterator::operator*()
 {
-    Iterator it;
+    return *it;
+}
+
+
+
+//Используем чтобы проще было получать что-то из поля it
+UText::Node* UText::Iterator::operator->()
+{
     return it;
 }
-
-
-
-
-
-
-//Указатель на конец (поле it)
-Iterator UText::endi()
-{
-    Iterator it;
-    return it;
-}
-
-
-
-
-std::pair<int, std::string> Iterator::operator*()
-{
-    return {it->level,it->data};
-}
-
-
-
-
-std::pair<int, std::string> Iterator::operator->()
-{
-    return {it->level,it->data};
-}
-//
 
 
 
 
 //Идет вправо, см. комментарий к pop
-Iterator Iterator::next()
+UText::Iterator UText::Iterator::next()
 {
     Iterator iter;
     iter.it=it->next;
@@ -131,7 +122,7 @@ Iterator Iterator::next()
 
 
 //Идет вправо до конца, см. комментарий к pop
-Iterator Iterator::endNext()
+UText::Iterator UText::Iterator::endNext()
 {
     //Заглушка
     Iterator iter;
@@ -141,7 +132,7 @@ Iterator Iterator::endNext()
 
 
 //Идет вниз с данной позиции, см. комментарий к pop
-Iterator Iterator::nextLevel()
+UText::Iterator UText::Iterator::nextLevel()
 {
     Iterator iter;
     iter.it=it->down;
@@ -150,8 +141,8 @@ Iterator Iterator::nextLevel()
 
 
 
-//Идет только вниз до упора, см. комментарий к pop
-Iterator Iterator::endNextLevel()
+//Идет только вниз и вправо до упора, см. комментарий к pop
+UText::Iterator UText::Iterator::endNextLevel()
 {
     //Заглушка
     Iterator iter;
@@ -177,7 +168,7 @@ Z   is
 Z   'новый символ'
 z-новый абзац
 */
-void Iterator::insNext(std::string data)
+void UText::Iterator::insNext(std::string data)
 {
 
 }
@@ -201,26 +192,68 @@ void Iterator::insNext(std::string data)
 z   age
  is'новый символ'
  */
-void Iterator::insDown(std::string data)
+void UText::Iterator::insDown(std::string data)
 {
 
 }
 
 
 
+//Публичный метод чтобы пользователь в цикле или где-то смог пойти вправо. Смещаем просто поле It
+void UText::Iterator::Next()
+{
 
-//сравнить только указатели it
-bool Iterator::operator==(const Iterator &iterator)
+}
+
+
+//Публичный метод чтобы пользователь в цикле или где-то смог пойти вниз. Смещаем просто поле It
+void UText::Iterator::Down()
 {
 
 }
 
 
 
-
-
-//сравнить только указатели it
-bool Iterator::operator!=(const Iterator &iterator)
+//Публичный метод чтобы пользователь смог получить содержание метки, где находится
+int UText::Iterator::current_level()
 {
+    return it->level;
+}
 
+
+
+//Публичный метод чтобы пользователь смог получить содержание метки, где находится
+std::string UText::Iterator::current_data()
+{
+    return it->data;
+}
+
+
+
+//Публичный метод чтобы пользователь смог получить содержание метки, где находится
+std::pair<int, std::string> UText::Iterator::current()
+{
+    return {it->level,it->data};
+}
+
+
+
+
+//сравнить только указатели it. ИМЕННО АДРЕСА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
+bool UText::Iterator::operator==(const Iterator &iterator)
+{
+    return false;
+}
+
+
+
+
+
+//сравнить только указатели it. ИМЕННО АДРЕССА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
+bool UText::Iterator::operator!=(const Iterator &iterator)
+{
+    Iterator iter;
+    std::string st= iter->data;
+    Node f= *iter;
+    return false;
 }
