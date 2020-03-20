@@ -10,8 +10,9 @@ class UText
 protected:
     class Iterator;
     struct Node;
-    Node * first;
+    Node* first;
     Node* end;
+    Node* curr;
 public:
     UText(); //Полина
     ~UText(); //Полина
