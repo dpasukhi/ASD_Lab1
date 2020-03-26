@@ -22,14 +22,12 @@ public:
     Iterator begin(); //Полина
     Iterator last(); //Полина
     void print(); //Влад
+    friend Iterator;
 };
 
 class UText::Iterator
 {
-    Node *it;
-    Node&  operator*();
-    Node* operator->();
-
+public:
     Iterator next(); // Андрей
     Iterator endNext();//"идет вправо до упора" //Андрей
     Iterator nextLevel(); //Андрей
@@ -37,7 +35,9 @@ class UText::Iterator
 
     void insNext(std::string data); //"добавляет новый Node в next" // Неизвестно
     void insDown(std::string data); //"добавляет новый Node в down" // Неизвестно
-public:
+    Node *it;
+    Node& operator*();
+    Node* operator->();
     void Next(); //Влад
     void Down(); //Влад
     int current_level();
