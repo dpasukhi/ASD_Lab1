@@ -16,7 +16,7 @@ UText::UText()
 //Очистить память для всех указателей
 UText::~UText()
 {
-
+    
 }
 
 
@@ -26,7 +26,12 @@ UText::~UText()
 //используя итератор пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_current_level(std::string data)
 {
-
+    Node* tmp = curr;
+    if(tmp == 0){
+        tmp = tmp->next;
+    }
+    
+    
 }
 
 
@@ -170,7 +175,11 @@ z-новый абзац
 */
 void UText::Iterator::insNext(std::string data)
 {
-
+    //Node* tmp = it;
+    //if(tmp->level != 3){
+    //        tmp = tmp->down;
+    //    }
+    
 }
 
 
@@ -194,7 +203,7 @@ z   age
  */
 void UText::Iterator::insDown(std::string data)
 {
-
+    
 }
 
 
@@ -231,10 +240,10 @@ std::string UText::Iterator::current_data()
 
 
 //Публичный метод чтобы пользователь смог получить содержание метки, где находится
-std::pair<int, std::string> UText::Iterator::current()
-{
-    return {it->level,it->data};
-}
+//std::pair<int, std::string> UText::Iterator::current()
+//{
+//    return {it->level,it->data};
+//}
 
 
 
