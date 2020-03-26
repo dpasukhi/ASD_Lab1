@@ -201,8 +201,11 @@ UText::Iterator UText::Iterator::next()
 //Идет вправо до конца, см. комментарий к pop
 UText::Iterator UText::Iterator::endNext()
 {
-    //Заглушка
     Iterator iter;
+    while (iter.it->next)
+    {
+        iter.it=it->next;
+    }
     return iter;
 }
 
@@ -223,6 +226,11 @@ UText::Iterator UText::Iterator::endNextLevel()
 {
     //Заглушка
     Iterator iter;
+    iter.it=it->down;
+    while (iter.it->next)
+    {
+        iter.it=it->next;
+    }
     return iter;
 }
 
@@ -279,14 +287,14 @@ void UText::Iterator::insDown(std::string data)
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вправо. Смещаем просто поле It
 void UText::Iterator::Next()
 {
-
+it=it->next;
 }
 
 
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вниз. Смещаем просто поле It
 void UText::Iterator::Down()
 {
-
+it=it->down;
 }
 
 
