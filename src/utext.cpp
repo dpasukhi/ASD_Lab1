@@ -1,4 +1,5 @@
 #include <include/utext.h>
+#include <vector>
 
 /*##############____Реализация класса UText_______###########*/
 
@@ -46,6 +47,82 @@ void UText::push_back_next_level(std::string data)
 std::pair<int, std::string> UText::pop()
 {
     return std::pair<int,std::string>(0,"");
+    Iterator iter;
+    iter.it=curr;
+    std::vector<Node*> vec;
+    vec.push_back(iter.it);
+    while(!vec.empty())
+    {
+        if(vec.back()->down != nullptr)
+        {
+            iter=iter.endNextLevel();
+            vec.push_back(iter.it);
+        }
+        else
+        {
+
+            delete iter.it;
+            vec.pop_back();
+            iter.it=vec.back();
+            if(iter.current_level()>1)
+            {
+                if(vec.back()->next)
+                    delete vec.back()->next;
+                if(vec.back()->down)
+                    delete vec.back()->down;
+                vec.back()->next=nullptr;
+                vec.back()->down=nullptr;
+            }
+            else
+            {
+                if(iter.it==first)
+                {
+                    first=iter.next().it;
+                    if(iter.it->down)
+                        delete iter.it->down;
+                    iter.it->down=nullptr;
+                }
+                else if(iter.it==end)
+                {
+                    std::vector<Node*> aVecForEnd;
+                    Iterator aItForEnd;
+                    if(vec.back()->next)
+                        delete vec.back()->next;
+                    if(vec.back()->down)
+                        delete vec.back()->down;
+                    aItForEnd.it=first;
+                    while(aVecForEnd.back()!=end)
+                    {
+                        aItForEnd.it=aItForEnd.it->next;
+                        aVecForEnd.push_back(aItForEnd.it);
+                    }
+                    aVecForEnd.pop_back();
+                    aItForEnd.it=aVecForEnd.back();
+                    end=iter.it;
+                    delete iter.it;
+                    iter.it->next=nullptr;
+                }
+                else
+                {
+                    std::vector<Node*> aVecForEnd;
+                    Iterator aItForEnd;
+                    if(vec.back()->down)
+                        delete vec.back()->down;
+                    aItForEnd.it=first;
+                    while(aVecForEnd.back()!=iter.it->next)
+                    {
+                        aItForEnd.it=aItForEnd.it->next;
+                        aVecForEnd.push_back(aItForEnd.it);
+                    }
+                    Node* tmp=aVecForEnd.back();
+                    aVecForEnd.pop_back();
+                    aVecForEnd.pop_back();
+                    aVecForEnd.back()->next=tmp;
+                }
+            }
+            iter.it=vec.back();
+        }
+    }
 }
 
 //Возвращает итератор, инициализированный нодом начала
