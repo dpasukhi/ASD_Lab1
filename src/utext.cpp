@@ -27,12 +27,13 @@ UText::~UText()
 //используя итератор пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_current_level(std::string data)
 {
-    Node* tmp = curr;
-    if(tmp == 0){
-        tmp = tmp->next;
+    Iterator iter;
+    iter.it = curr;
+    iter.insNext(data);
+    
+    if(curr == end){
+        end = end->next;
     }
-    
-    
 }
 
 
@@ -41,7 +42,14 @@ void UText::push_back_current_level(std::string data)
 //используя итератор опуститься на уровень вниз, пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_next_level(std::string data)
 {
-
+    Iterator iter;
+    iter.it = curr;
+    iter.insDown(data);
+    
+    if(curr == end){
+        end = end->next;
+    }
+    
 }
 
 
@@ -252,11 +260,16 @@ z-новый абзац
 */
 void UText::Iterator::insNext(std::string data)
 {
-    //Node* tmp = it;
-    //if(tmp->level != 3){
-    //        tmp = tmp->down;
-    //    }
-    
+    Iterator iter;
+    iter = this->endNext();
+    Node tmp;
+    tmp.data = data;
+    tmp.next = 0;
+    tmp.down = 0;
+    tmp.level = iter.current_level();
+    iter->next = new Node(tmp);
+    iter.it = iter->next;
+    //переинициализация класса UText, а именно указатели на текщий и последний элемент(проверка)
 }
 
 
@@ -280,7 +293,16 @@ z   age
  */
 void UText::Iterator::insDown(std::string data)
 {
-    
+    Iterator iter;
+    iter = this->nextLevel();//ожидается вызов исключения в этой функции
+    iter = this->endNext();    Node tmp;
+    tmp.data = data;
+    tmp.next = 0;
+    tmp.down = 0;
+    tmp.level = iter.current_level();
+    iter->next = new Node(tmp);
+    iter.it = iter->next;
+    //переинициализация класса UText, а именно указатели на текщий и последний элемент(проверка)
 }
 
 
