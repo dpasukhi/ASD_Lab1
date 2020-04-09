@@ -1,5 +1,6 @@
 #include <include/utext.h>
 #include <vector>
+#include <iostream>
 
 /*##############____Реализация класса UText_______###########*/
 
@@ -174,7 +175,17 @@ z-новый абзац(его не надо печатать, он для ви�
  */
 void UText::print()
 {
+	Iterator iter;
+	iter.it = curr;
+	while (iter.endNextLevel()->next!=nullptr) {
 
+		while (curr->next) {
+			std::cout << curr->data;
+
+
+	}
+		std::cout << std::endl;
+	}
 }
 
 
@@ -214,8 +225,11 @@ UText::Iterator UText::Iterator::next()
 //Идет вправо до конца, см. комментарий к pop
 UText::Iterator UText::Iterator::endNext()
 {
-    //Заглушка
     Iterator iter;
+    while (iter.it->next)
+    {
+        iter.it=it->next;
+    }
     return iter;
 }
 
@@ -236,6 +250,11 @@ UText::Iterator UText::Iterator::endNextLevel()
 {
     //Заглушка
     Iterator iter;
+    iter.it=it->down;
+    while (iter.it->next)
+    {
+        iter.it=it->next;
+    }
     return iter;
 }
 
@@ -261,15 +280,12 @@ z-новый абзац
 void UText::Iterator::insNext(std::string data)
 {
     Iterator iter;
-    iter = this->endNext();
-    Node tmp;
-    tmp.data = data;
-    tmp.next = 0;
-    tmp.down = 0;
-    tmp.level = iter.current_level();
-    iter->next = new Node(tmp);
-    iter.it = iter->next;
-    //переинициализация класса UText, а именно указатели на текщий и последний элемент(проверка)
+    iter.it = it;
+    Node* tmp = new Node();
+    tmp->data = data;
+    tmp->down = nullptr;//
+    tmp->next = it->next;
+    it->next = tmp;
 }
 
 
@@ -294,15 +310,16 @@ z   age
 void UText::Iterator::insDown(std::string data)
 {
     Iterator iter;
-    iter = this->nextLevel();//ожидается вызов исключения в этой функции
-    iter = this->endNext();    Node tmp;
-    tmp.data = data;
-    tmp.next = 0;
-    tmp.down = 0;
-    tmp.level = iter.current_level();
-    iter->next = new Node(tmp);
-    iter.it = iter->next;
-    //переинициализация класса UText, а именно указатели на текщий и последний элемент(проверка)
+    iter.it = it;
+    if(it->level == 2)
+        throw "нельзя создать уровень ниже";
+    iter = nextLevel();
+    iter = endNext();
+    Node* tmp = new Node();
+    tmp->data = data;
+    tmp->down = nullptr;//
+    tmp->next = nullptr;
+    it->next = tmp;
 }
 
 
@@ -310,14 +327,14 @@ void UText::Iterator::insDown(std::string data)
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вправо. Смещаем просто поле It
 void UText::Iterator::Next()
 {
-
+it=it->next;
 }
 
 
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вниз. Смещаем просто поле It
 void UText::Iterator::Down()
 {
-
+it=it->down;
 }
 
 

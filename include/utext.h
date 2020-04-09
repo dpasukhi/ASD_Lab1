@@ -55,3 +55,4 @@ struct UText::Node {
 
 };
 #endif // UTEXT_H
+*
