@@ -1,5 +1,6 @@
 #include <include/utext.h>
 #include <vector>
+#include <iostream>
 
 /*##############____Реализация класса UText_______###########*/
 
@@ -161,7 +162,17 @@ z-новый абзац(его не надо печатать, он для ви�
  */
 void UText::print()
 {
+	Iterator iter;
+	iter.it = curr;
+	while (iter.endNextLevel()->next!=nullptr) {
 
+		while (curr->next) {
+			std::cout << curr->data;
+
+
+	}
+		std::cout << std::endl;
+	}
 }
 
 
