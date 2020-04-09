@@ -163,15 +163,22 @@ z-новый абзац(его не надо печатать, он для ви�
 void UText::print()
 {
 	Iterator iter;
-	iter.it = curr;
-	while (iter.endNextLevel()->next!=nullptr) {
+	iter.it = first;
 
-		while (curr->next) {
-			std::cout << curr->data;
+	while (iter.next().it!=nullptr) 
+	{
+		if (iter.it->down != nullptr) 
+		{
+			Node *first_of_line = first->down;
 
-
-	}
-		std::cout << std::endl;
+			while (first_of_line->next)
+			{
+				std::cout << first_of_line->data;
+				first_of_line = first_of_line->next;
+			}
+			std::cout << std::endl;
+		}
+		iter.it = iter.next().it;
 	}
 }
 
