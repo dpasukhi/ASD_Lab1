@@ -7,6 +7,8 @@ int main()
 {
     cout << "Hello World!" << endl;
     UText t;
+    t.push_back_current_level("I Have Quastions");
+    t.print();
 
     return 0;
 

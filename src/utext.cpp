@@ -8,7 +8,7 @@
 //Обнулить все полня (nullptr)
 UText::UText()
 {
-
+  first = end = curr = nullptr;
 }
 
 
@@ -18,9 +18,14 @@ UText::UText()
 //Очистить память для всех указателей
 UText::~UText()
 {
-
+  if (first != nullptr) 
+  {
+    while (first != nullptr) {
+      curr = end;
+      pop();
+    }
+  }
 }
-
 
 
 
@@ -28,7 +33,25 @@ UText::~UText()
 //используя итератор пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_current_level(std::string data)
 {
+  if (first == nullptr) 
+  {
+    first = new Node();
+    first->level = 0;
+    first->data = data;
+    first->next = nullptr;
+    first->down = nullptr;
+    curr = end = first;
+  }
+  else {
+    Iterator iter;
+    iter.it = curr;
+    iter = iter.endNext();
+    iter.insNext(data);
 
+    if (curr == end) {
+      end = end->next;
+    }
+  }
 }
 
 
@@ -37,7 +60,26 @@ void UText::push_back_current_level(std::string data)
 //используя итератор опуститься на уровень вниз, пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_next_level(std::string data)
 {
+  if (first == nullptr)
+  {
+    first = new Node();
+    first->level = 0;
+    first->data = "";
+    first->next = nullptr;
+    first->down = new Node();
+    first->down->data = data;
+    first->down->level = 1;
+    first->down->next = nullptr;
+    first->down->down = nullptr;
+    curr = end= first->down;
+  }
+  Iterator iter;
+  iter.it = curr;
+  iter.insDown(data);
 
+  if (curr == end) {
+    end = end->next;
+  }
 }
 
 
@@ -162,17 +204,25 @@ z-новый абзац(его не надо печатать, он для ви�
  */
 void UText::print()
 {
+  if (first == nullptr)
+    return;
 	Iterator iter;
-	iter.it = curr;
-	while (iter.endNextLevel()->next!=nullptr) {
-
-		while (curr->next) {
-			std::cout << curr->data;
-
-
-	}
-		std::cout << std::endl;
-	}
+	iter.it = first;
+	do
+  {
+    std::cout << iter.it->data << std::endl;
+    if (iter.it->down != nullptr) 
+    {
+      Iterator localIter;
+      localIter.it = iter.it;
+      do
+      {
+        std::cout << localIter.it->data << std::endl;
+        localIter.Next();
+      } while (localIter.it->next != nullptr);
+      std::cout << std::endl;
+    }
+  } while (iter.it->next != nullptr);
 }
 
 
@@ -213,7 +263,8 @@ UText::Iterator UText::Iterator::next()
 UText::Iterator UText::Iterator::endNext()
 {
     Iterator iter;
-    while (iter.it->next)
+    iter.it = it;
+    while (iter.it->next != nullptr)
     {
         iter.it=it->next;
     }
@@ -266,7 +317,14 @@ z-новый абзац
 */
 void UText::Iterator::insNext(std::string data)
 {
-
+  Iterator iter;
+  iter.it = it;
+  Node* tmp = new Node();
+  tmp->data = data;
+  tmp->down = nullptr;
+  tmp->level = it->level;
+  tmp->next = it->next;
+  it->next = tmp;
 }
 
 
@@ -290,7 +348,18 @@ z   age
  */
 void UText::Iterator::insDown(std::string data)
 {
-
+  Iterator iter;
+  iter.it = it;
+  if (it->level == 2)
+    throw "нельзя создать уровень ниже";
+  iter = nextLevel();
+  iter = endNext();
+  Node* tmp = new Node();
+  tmp->data = data;
+  tmp->down = nullptr;
+  tmp->level = it->level + 1;
+  tmp->next = nullptr;
+  it->next = tmp;
 }
 
 
@@ -298,6 +367,8 @@ void UText::Iterator::insDown(std::string data)
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вправо. Смещаем просто поле It
 void UText::Iterator::Next()
 {
+  if (it->next == nullptr)
+    return;
 it=it->next;
 }
 
@@ -305,6 +376,8 @@ it=it->next;
 //Публичный метод чтобы пользователь в цикле или где-то смог пойти вниз. Смещаем просто поле It
 void UText::Iterator::Down()
 {
+  if (it->down == nullptr)
+    return;
 it=it->down;
 }
 
@@ -338,7 +411,7 @@ std::pair<int, std::string> UText::Iterator::current()
 //сравнить только указатели it. ИМЕННО АДРЕСА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
 bool UText::Iterator::operator==(const Iterator &iterator)
 {
-    return false;
+  return it == iterator.it;
 }
 
 
@@ -348,8 +421,5 @@ bool UText::Iterator::operator==(const Iterator &iterator)
 //сравнить только указатели it. ИМЕННО АДРЕССА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
 bool UText::Iterator::operator!=(const Iterator &iterator)
 {
-    Iterator iter;
-    std::string st= iter->data;
-    Node f= *iter;
-    return false;
+  return it != iterator.it;
 }
