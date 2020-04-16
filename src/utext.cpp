@@ -18,10 +18,9 @@ UText::UText()
 //Очистить память для всех указателей
 UText::~UText()
 {
-  if (first != nullptr) 
+  if (end != nullptr) 
   {
-    while (first != nullptr) {
-      curr = end;
+    while (end != nullptr) {
       pop();
     }
   }
@@ -33,7 +32,7 @@ UText::~UText()
 //используя итератор пройтись до конца уровня и вставить созданный через new Node
 void UText::push_back_current_level(std::string data)
 {
-  if (first == nullptr) 
+  if (first == nullptr)
   {
     first = new Node();
     first->level = 0;
@@ -47,12 +46,10 @@ void UText::push_back_current_level(std::string data)
     iter.it = curr;
     iter = iter.endNext();
     iter.insNext(data);
-
-    if (curr == end) {
-      end = end->next;
-    }
+    end = end->next;
   }
 }
+
 
 
 
@@ -75,10 +72,15 @@ void UText::push_back_next_level(std::string data)
   }
   Iterator iter;
   iter.it = curr;
-  iter.insDown(data);
-
-  if (curr == end) {
+  if (end->data == iter.endNextLevel().it->data)
+  {
+    iter.insDown(data);
     end = end->next;
+  }
+  else {
+    iter.insDown(data);
+    if (curr == end)
+      end = end->down;
   }
 }
 
@@ -89,8 +91,76 @@ void UText::push_back_next_level(std::string data)
 //удалить Node заменив указатели на указатели выше и ниже стоящих
 std::pair<int, std::string> UText::pop()
 {
-    return std::pair<int,std::string>(0,"");
-    Iterator iter;
+  if (first == end)
+  {
+    std::cout << end->level << " " << end->data << "\n ";
+    delete end;
+    first = end = curr = nullptr;
+    return std::pair<int, std::string>(0, "");
+  }
+  Iterator iter;
+  std::pair<int, std::string> tmp;
+  iter.it = first;
+  std::vector<Node*> vec;
+  while (iter.it->next != nullptr)
+  {
+    vec.push_back(iter.it);
+    if (iter.it->down != nullptr)
+    {
+      Iterator localIter;
+      localIter.it = iter.it->down;
+      while (localIter.it->next != nullptr)
+      {
+        vec.push_back(localIter.it);
+        localIter.Next();
+      }
+      vec.push_back(localIter.it);
+    }
+    Node* t = iter.it->next;
+    if (iter.it->next == end)
+    {
+      iter.it->next = nullptr;
+    }
+    iter.it = t;
+  }
+  vec.push_back(iter.it);
+  if (iter.it->down != nullptr)
+  {
+    Iterator localIter;
+    localIter.it = iter.it->down;
+    while (localIter.it->next != nullptr)
+    {
+      vec.push_back(localIter.it);
+      localIter.Next();
+    }
+    vec.push_back(localIter.it);
+  }
+  /*
+  if (end->level == 1)
+  {
+    iter.Down();
+    while (iter.it->next != nullptr)
+    {
+      iter.Next();
+      vec.push_back(iter.it);
+    }
+    vec.push_back(iter.it);
+  }*/
+  tmp = { vec[vec.size() - 1]->level,vec[vec.size() - 1]->data };
+  vec.pop_back();
+  if (curr == end)
+  {
+    curr = vec[vec.size()-1];
+  }
+  delete end;
+  end = vec[vec.size() - 1];
+  end->next = nullptr;
+  end->down = nullptr;
+  std::cout << tmp.first << " " << tmp.second << "\n ";
+  return tmp;
+}
+
+  /*  Iterator iter;
     iter.it=curr;
     std::vector<Node*> vec;
     vec.push_back(iter.it);
@@ -165,8 +235,8 @@ std::pair<int, std::string> UText::pop()
             }
             iter.it=vec.back();
         }
-    }
-}
+    }*/
+//}
 
 //Возвращает итератор, инициализированный нодом начала
 UText::Iterator UText::begin()
@@ -214,7 +284,7 @@ void UText::print()
     if (iter.it->down != nullptr) 
     {
       Iterator localIter;
-      localIter.it = iter.it;
+      localIter.it = iter.it->down;
       do
       {
         std::cout << localIter.it->data << std::endl;
@@ -222,7 +292,20 @@ void UText::print()
       } while (localIter.it->next != nullptr);
       std::cout << std::endl;
     }
+    iter.Next();
   } while (iter.it->next != nullptr);
+  std::cout << iter.it->data << std::endl;
+  if (iter.it->down != nullptr)
+  {
+    Iterator localIter;
+    localIter.it = iter.it->down;
+    do
+    {
+      std::cout << localIter.it->data << std::endl;
+      localIter.Next();
+    } while (localIter.it->next != nullptr);
+    std::cout << std::endl;
+  }
 }
 
 
@@ -266,7 +349,7 @@ UText::Iterator UText::Iterator::endNext()
     iter.it = it;
     while (iter.it->next != nullptr)
     {
-        iter.it=it->next;
+        iter.it=iter.it->next;
     }
     return iter;
 }
@@ -288,10 +371,12 @@ UText::Iterator UText::Iterator::endNextLevel()
 {
     //Заглушка
     Iterator iter;
+    if (it->down == nullptr)
+      return *this;
     iter.it=it->down;
     while (iter.it->next)
     {
-        iter.it=it->next;
+        iter.it=iter.it->next;
     }
     return iter;
 }
@@ -350,16 +435,27 @@ void UText::Iterator::insDown(std::string data)
 {
   Iterator iter;
   iter.it = it;
-  if (it->level == 2)
+  if (it->level == 1)
     throw "нельзя создать уровень ниже";
-  iter = nextLevel();
-  iter = endNext();
-  Node* tmp = new Node();
-  tmp->data = data;
-  tmp->down = nullptr;
-  tmp->level = it->level + 1;
-  tmp->next = nullptr;
-  it->next = tmp;
+  if (it->down == nullptr)
+  {
+    Node* tmp = new Node();
+    tmp->data = data;
+    tmp->down = nullptr;
+    tmp->level = it->level + 1;
+    tmp->next = nullptr;
+    it->down = tmp;
+  }
+  else {
+    iter = nextLevel();
+    iter = endNext();
+    Node* tmp = new Node();
+    tmp->data = data;
+    tmp->down = nullptr;
+    tmp->level = it->level + 1;
+    tmp->next = nullptr;
+    it->next = tmp; 
+  }
 }
 
 
@@ -411,7 +507,7 @@ std::pair<int, std::string> UText::Iterator::current()
 //сравнить только указатели it. ИМЕННО АДРЕСА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
 bool UText::Iterator::operator==(const Iterator &iterator)
 {
-  return it == iterator.it;
+  return it->data == iterator.it->data;
 }
 
 
@@ -421,5 +517,5 @@ bool UText::Iterator::operator==(const Iterator &iterator)
 //сравнить только указатели it. ИМЕННО АДРЕССА ну что является для тебя важным, чтобы понять что мы на одной метке(с англ. Label)
 bool UText::Iterator::operator!=(const Iterator &iterator)
 {
-  return it != iterator.it;
+  return it->data != iterator.it->data;
 }

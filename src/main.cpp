@@ -8,6 +8,9 @@ int main()
     cout << "Hello World!" << endl;
     UText t;
     t.push_back_current_level("I Have Quastions");
+    t.push_back_current_level("You die");
+    t.push_back_current_level("or you alive");
+    t.push_back_next_level("You back to the ground");
     t.print();
 
     return 0;
