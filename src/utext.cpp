@@ -447,14 +447,14 @@ void UText::Iterator::insDown(std::string data)
     it->down = tmp;
   }
   else {
-    iter = nextLevel();
-    iter = endNext();
+    iter = iter.nextLevel();
+    iter = iter.endNext();
     Node* tmp = new Node();
     tmp->data = data;
     tmp->down = nullptr;
     tmp->level = it->level + 1;
     tmp->next = nullptr;
-    it->next = tmp; 
+    iter.it->next = tmp;
   }
 }
 

@@ -11,6 +11,7 @@ int main()
     t.push_back_current_level("You die");
     t.push_back_current_level("or you alive");
     t.push_back_next_level("You back to the ground");
+    t.push_back_next_level("You awesome");
     t.print();
 
     return 0;
