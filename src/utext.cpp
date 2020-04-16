@@ -26,6 +26,18 @@ UText::~UText()
   }
 }
 
+void UText::Next()
+{
+    if (curr->next == nullptr) throw "Undo";
+    curr = curr->next;
+}
+
+void UText::Down()
+{
+  if (curr->down == nullptr) throw "Undo";
+  curr = curr->down;
+}
+
 
 
 

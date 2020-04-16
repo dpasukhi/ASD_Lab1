@@ -16,6 +16,8 @@ protected:
 public:
     UText(); //Полина
     ~UText(); //Полина
+    void Next();
+    void Down();
     void push_back_current_level (std::string data); //Паша
     void push_back_next_level (std::string data); //Паша
     std::pair<int, std::string> pop(); //Полина
