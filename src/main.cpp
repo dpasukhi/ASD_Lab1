@@ -14,6 +14,10 @@ int main()
     t.push_back_next_level("You awesome");
     t.Next();
     t.push_back_next_level("Second str");
+    t.Next();
+    t.push_back_next_level("END");
+    t.Down();
+    t.push_back_current_level("END of END");
     t.print();
 
     return 0;

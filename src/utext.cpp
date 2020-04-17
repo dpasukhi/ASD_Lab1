@@ -253,14 +253,18 @@ std::pair<int, std::string> UText::pop()
 //Возвращает итератор, инициализированный нодом начала
 UText::Iterator UText::begin()
 {
-    return  Iterator();
+  Iterator iter;
+  iter.it = first;
+  return iter;
 }
 
 
 //Возвращает итератор, инициализированный нодом начала
 UText::Iterator UText::last()
 {
-    return Iterator();
+  Iterator iter;
+  iter.it = end;
+  return iter;
 }
 
 
@@ -531,3 +535,4 @@ bool UText::Iterator::operator!=(const Iterator &iterator)
 {
   return it->data != iterator.it->data;
 }
+
