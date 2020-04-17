@@ -58,7 +58,8 @@ void UText::push_back_current_level(std::string data)
     iter.it = curr;
     iter = iter.endNext();
     iter.insNext(data);
-    end = end->next;
+    if(iter.current_level()==0|| iter.current_data() == end->data)
+      end = end->next;
   }
 }
 
@@ -87,7 +88,7 @@ void UText::push_back_next_level(std::string data)
   if (end->data == iter.endNextLevel().it->data)
   {
     iter.insDown(data);
-    end = end->next;
+    end = end->down;
   }
   else {
     iter.insDown(data);
@@ -275,8 +276,8 @@ UText::Iterator UText::last()
 /* пройтись по всему тексту и распечатать начиная с начала, например
 
     Abz1      Abz2       Abz3
-  |      |     |       |     |
- str1   str2  str3    str4  str5
+  |             |       |    
+ str1 -- str2  str3    str4--str5
  | | |  | |    |      | |   | | |
  a g e  i s    a      n o   a x o
 
@@ -301,12 +302,12 @@ void UText::print()
     {
       Iterator localIter;
       localIter.it = iter.it->down;
-      do
+       while (localIter.it->next != nullptr)
       {
         std::cout << localIter.it->data << std::endl;
         localIter.Next();
-      } while (localIter.it->next != nullptr);
-      std::cout << std::endl;
+      } 
+      std::cout << localIter.it->data << std::endl;
     }
     iter.Next();
   } while (iter.it->next != nullptr);
@@ -315,12 +316,12 @@ void UText::print()
   {
     Iterator localIter;
     localIter.it = iter.it->down;
-    do
+    while (localIter.it->next != nullptr)
     {
       std::cout << localIter.it->data << std::endl;
       localIter.Next();
-    } while (localIter.it->next != nullptr);
-    std::cout << std::endl;
+    }
+    std::cout << localIter.it->data << std::endl;
   }
 }
 
@@ -405,8 +406,8 @@ UText::Iterator UText::Iterator::endNextLevel()
 /*
 мы находимя на str2, то вставляем правее
     Abz1
-  |      |
- str1   str2
+  |      
+ str1-- str2
  | | |  | |
  a g e  i s
 
@@ -438,8 +439,8 @@ void UText::Iterator::insNext(std::string data)
 /*
 мы находимя на str2, то вставляем сразу после s
     Abz1
-  |      |
- str1   str2
+  |      
+ str1 --str2
  | | |  | |
  a g e  i s
 

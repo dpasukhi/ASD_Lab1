@@ -17,7 +17,7 @@ int main()
     t.Next();
     t.push_back_next_level("END");
     t.Down();
-    t.push_back_current_level("END of END");
+    t.push_back_current_level("END OF THE END");
     t.print();
 
     return 0;
